@@ -12,7 +12,7 @@ pip install ai-dive
 
 ## Why build AI-Dive
 
-In the age of the AI Engineer, it is more likely that you will start by grabbing an off the shelf model as a starting point than training your own from scratch to get started solving a problem. That is not to say you will never train a model. It is just to say, let's verify state of the art before we go building.
+In the age of the [AI Engineer](https://www.latent.space/p/ai-engineer), it is more likely that you will start by grabbing an off the shelf model as a starting point than training your own from scratch to get started solving a problem. That is not to say you will never train a model. It is just to say, let's verify state of the art before we go building.
 
 🤿 AI-Dive let's you easily dive into the results of a model to decide whether it is worth building upon. It also gives a simple and consistent interface to run in your app, or implement new models.
 
@@ -49,12 +49,38 @@ There are a few models implemented already, we are looking to extend this list t
 
 Models are worthless without the data to run and evaluate them on. Sure you can poke your model with a stick by running on a single example, but the real insights come from running your model given a dataset.
 
+```python
+from ai.dive.models.vit import ViT
+from ai.dive.data.directory_classification import DirectoryClassification
 
-## Implement the model interface
+# Instantiate the model and dataset
+model = ViT()
+dataset = DirectoryClassification(data_dir="/path/to/images")
+
+# Use a Saver to write the results to a csv
+saver = Saver(
+    "output.csv",
+    output_keys=['filename', 'class_name', 'prediction', 'probability'],
+    save_every=10
+)
+
+# Run the model on the dataset, and save the results as we go
+diver = Diver(model, dataset, saver=saver)
+results = diver.run()
+
+# The output will be a list of all the predictions
+print(results)
+```
+
+The `Diver` object saves you the work of processing each row in the dataframe and the `Saver` takes care of writing all the results to disk so you can compare them across runs.
+
+With plug and play models and datasets, the hope is anyone can evaluate a model against any dataset and share the results quickly and effectively.
+
+## Model Interface
 
 TODO
 
-## Implement the dataset interface
+## Dataset Interface
 
 A dataset has to implement two methods `__len__` and `__getitem__` so that we can iterate over it. If it implements `_build`, you can load everything into memory to make the other calls faster.
 

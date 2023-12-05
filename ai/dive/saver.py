@@ -6,13 +6,17 @@ class Saver:
         self,
         output_file,
         output_keys=None,
-        format="csv",
+        format=None,
         save_every=None
     ):
         self.output_file = output_file
         self.output_keys = output_keys
         self.format = format
         self.save_every = save_every
+
+        if format is None:
+            # take the format from the file extension
+            self.format = self.output_file.split(".")[-1]
 
     def save(self, results):
         match self.format:
