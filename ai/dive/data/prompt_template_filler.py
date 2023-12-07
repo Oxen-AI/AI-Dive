@@ -3,17 +3,16 @@ import pandas as pd
 from langchain.prompts import PromptTemplate
 
 class PromptTemplateFiller(Dataset):
-    def __init__(self, file, template, num_repeats):
+    def __init__(self, file, template):
         super().__init__()
 
         self.file = file
         self.template = template
-        self.num_repeats = num_repeats
         self.prompt_key = 'response'
 
     # For iterating over the dataset
     def __len__(self):
-        return self.num_repeats
+        return len(self.prompts)
 
     # For iterating over the dataset
     def __getitem__(self, idx):

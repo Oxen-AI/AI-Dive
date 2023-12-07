@@ -25,7 +25,7 @@ class GPT4(Model):
         prompt = data['prompt']
 
         prompt = ChatPromptTemplate.from_template(prompt)
-        model = ChatOpenAI(cache=False, temperature=0.9, model="gpt-4")
+        model = ChatOpenAI(cache=False, temperature=0.9, model="gpt-4-1106-preview")
         output_parser = StrOutputParser()
 
         chain = prompt | model | output_parser

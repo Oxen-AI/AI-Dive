@@ -9,7 +9,7 @@ def main():
     parser = argparse.ArgumentParser(description='Complete a bunch of cheesy dad jokes')
     parser.add_argument('-d', '--dataset', required=True, type=str, help='dataset to run model on')
     parser.add_argument('-o', '--output', required=True, type=str, help='output file to write results to')
-    parser.add_argument('-n', '--num-samples', default=-1, type=int, help='Number of samples to run model on')
+    parser.add_argument('-n', '--num_samples', default=10, type=int, help='Number of samples to run model on')
     args = parser.parse_args()
 
     model = GPT4()
@@ -21,11 +21,11 @@ def main():
 
     dataset = PromptTemplateFiller(
         file=args.dataset,
-        template="You are a hilarious cheesy dad joke generator. Generate a punchline given a setup.\n\nSetup: {prompt}\n\nPunchline:",
-        num_repeats=10
+        template="You are a hilarious cheesy dad joke generator. Generate a punchline given a setup.\n\nSetup: {prompt}\n\nPunchline:"
     )
 
-    saver = Saver(args.output, format="csv", save_every=10)
+    output_keys = ['idx', 'prompt', 'input', 'response', 'time']
+    saver = Saver(args.output, output_keys=output_keys, format="csv", save_every=10)
     diver = Diver(model, dataset, saver=saver)
     diver.run()
 
