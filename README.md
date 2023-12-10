@@ -12,16 +12,50 @@ pip install ai-dive
 
 ## Why build AI-Dive
 
-In the age of the [AI Engineer](https://www.latent.space/p/ai-engineer), it is more likely that you will start by grabbing an off the shelf model as a starting point than training your own from scratch to get started solving a problem. That is not to say you will never train a model. It is just to say, let's verify state of the art before we go building.
+In the age of the [AI Engineer](https://www.latent.space/p/ai-engineer), it is more likely that you will start by grabbing an off the shelf model as a starting point than training your own from scratch. That is not to say you will never train a model. It is just to say, let's verify state of the art before we go building.
 
-🤿 AI-Dive let's you easily dive into the results of a model to decide whether it is worth building upon. It also gives a simple and consistent interface to run in your app, or implement new models.
+> A wide range of AI tasks that used to take 5 years and a research team to accomplish in 2013, now just require API docs and a spare afternoon in 2023.
 
-# Interfaces
+🤿 AI-Dive let's you easily dive into the results of a model to decide whether it is worth building upon. It also gives a simple and consistent interface to run in your app or implement new models.
+
+# Model
+
+TODO: Breakup below into each part
+
+1) Model
+2) Dataset
+3) Diver
+4) Saver
+
+# Dataset
+
+TODO
+
+# Dive
+
+TODO
+
+# Save
+
+TODO
+
+# All Together Now
+
+TODO
+
+# Model & Dataset
 
 There are only a two interfaces to implement to get up and running on any model or dataset.
 
 1) `Dataset` - How to iterate over data
 2) `Model` - How to predict given each data point
+
+# Dive & Save
+
+There are two helper classes to run your model given a dataset
+
+1) `Diver` - How to run each datapoint from your dataset through the model.
+2) `Saver` - How to save off the results of the run. Running the model and not saving the results can cost time and money.
 
 ## Models
 
@@ -37,6 +71,9 @@ print(output)
 ```
 
 There are a few models implemented already, we are looking to extend this list to new models as the come out, or allow this interface to be implemented in your package to save you time evaluating.
+
+HELP US BUILD OUT OUR MODEL LIBRARY OR IMPLEMENT YOUR OWN
+TODO: Show how to do either
 
 * [x] Vision Transformer (ViT)
 * [ ] Llama-2

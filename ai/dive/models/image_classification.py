@@ -1,21 +1,11 @@
 
 
-from transformers import AutoImageProcessor, ResNetForImageClassification
-
-import os
 from PIL import Image
 from ai.dive.models.model import Model
 
-class ResNet50(Model):
+class ImageClassification(Model):
     def __init__(self):
         super().__init__()
-
-    # Load model into memory
-    def _build(self):
-        print("Loading model...")
-        model_name = 'microsoft/resnet-50'
-        self.processor = AutoImageProcessor.from_pretrained(model_name)
-        self.model = ResNetForImageClassification.from_pretrained(model_name)
 
     # Function to run the model on a single example
     def _predict(self, data):
