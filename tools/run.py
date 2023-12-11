@@ -12,18 +12,18 @@ def main():
     parser.add_argument('-d', '--dataset', required=True, type=str, help='dataset to run model on')
     parser.add_argument('-o', '--output', required=True, type=str, help='output file to write results to')
     parser.add_argument('-n', '--num-samples', default=-1, type=int, help='Number of samples to run model on')
+    parser.add_argument('-m', '--base_model', default="google/vit-base-patch16-224", type=str, help='The base model to use')
     args = parser.parse_args()
 
-    model = ViT()
-    dataset = FileClassification(
-        data_dir=args.dataset,
-        file="images.csv",
-        path_key="filename",
-        label_key="class_name",
-    )
+    model = ViT(model_name=args.base_model)
+    # dataset = FileClassification(
+    #     data_dir=args.dataset,
+    #     file="images.csv",
+    #     path_key="filename",
+    #     label_key="class_name",
+    # )
 
-    # dataset = DirectoryClassification(data_dir=args.dataset)
-
+    dataset = DirectoryClassification(data_dir=args.dataset)
     output_keys = ['filename', 'class_name', 'prediction', 'probability', 'is_correct']
     saver = Saver(args.output, output_keys=output_keys, format="csv", save_every=10)
 

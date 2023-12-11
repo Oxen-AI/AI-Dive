@@ -13,6 +13,10 @@ class ImageClassification(Model):
         filename = data['filepath']
         image = Image.open(filename)
 
+        # If grayscale, convert to RGB
+        if image.mode == 'L':
+            image = image.convert('RGB')
+
         # Preprocess image
         inputs = self.processor(images=image, return_tensors="pt")
 

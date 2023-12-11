@@ -6,7 +6,8 @@ from PIL import Image
 from ai.dive.models.model import Model
 
 class CLIP(Model):
-    def __init__(self):
+    def __init__(self, labels_file=None):
+        self.labels_file = labels_file
         super().__init__()
 
     # Load model into memory
@@ -15,47 +16,13 @@ class CLIP(Model):
         model_name = 'openai/clip-vit-large-patch14'
         self.processor = CLIPProcessor.from_pretrained(model_name)
         self.model = CLIPModel.from_pretrained(model_name)
-        self.prompt = "a photo of a"
+        self.prompt = "a photo of a person's face with the emotion of"
         self.class_labels = [
-            "abyssinian",
-            "american bulldog",
-            "american pit bull terrier",
-            "basset hound",
-            "beagle",
-            "bengal",
-            "birman",
-            "bombay",
-            "boxer",
-            "british shorthair",
-            "chihuahua",
-            "egyptian mau",
-            "english cocker spaniel",
-            "english setter",
-            "german shorthaired",
-            "great pyrenees",
-            "havanese",
-            "japanese chin",
-            "keeshond",
-            "leonberger",
-            "maine coon",
-            "miniature pinscher",
-            "newfoundland",
-            "persian",
-            "pomeranian",
-            "pug",
-            "ragdoll",
-            "russian blue",
-            "saint bernard",
-            "samoyed",
-            "scottish terrier",
-            "shiba inu",
-            "siamese",
-            "sphynx",
-            "staffordshire bull terrier",
-            "wheaten terrier",
-            "yorkshire terrier",
             "__unknown__", # Pick a random word from the vocabulary for unknown
         ]
+        if self.labels_file is not None:
+            with open(self.labels_file, 'r') as f:
+                self.class_labels = f.read().splitlines()
 
     # Function to run the model on a single example
     def _predict(self, data):

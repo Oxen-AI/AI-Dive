@@ -2,24 +2,28 @@ from ai.dive.saver import Saver
 from ai.dive.diver import Diver
 from ai.dive.models.clip import CLIP
 from ai.dive.data.file_classification import FileClassification
+from ai.dive.data.directory_classification import DirectoryClassification
 import argparse
 
 def main():
     # parse command line arguments
     parser = argparse.ArgumentParser(description='Run model on dataset')
-    parser.add_argument('-d', '--dataset', required=True, type=str, help='dataset to run model on')
+    parser.add_argument('-d', '--dataset', required=True, type=str, help='Dataset to run model on')
+    parser.add_argument('-l', '--labels', required=True, type=str, help='The dynamic labels file to use')
     parser.add_argument('-o', '--output', required=True, type=str, help='output file to write results to')
     parser.add_argument('-n', '--num-samples', default=-1, type=int, help='Number of samples to run model on')
+    
     args = parser.parse_args()
 
-    model = CLIP()
-    dataset = FileClassification(
-        data_dir=args.dataset,
-        file="images.csv",
-        path_key="filename",
-        label_key="class_name",
-    )
+    model = CLIP(labels_file=args.labels)
+    # dataset = FileClassification(
+    #     data_dir=args.dataset,
+    #     file="images.csv",
+    #     path_key="filename",
+    #     label_key="class_name",
+    # )
 
+    dataset = DirectoryClassification(data_dir=args.dataset)
     output_keys = ['filename', 'class_name', 'prediction', 'probability', 'is_correct', 'time']
     saver = Saver(args.output, output_keys=output_keys, format="csv", save_every=10)
 

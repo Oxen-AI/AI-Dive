@@ -1,5 +1,6 @@
 from ai.dive.data.dataset import Dataset
 import os
+import random
 
 class DirectoryClassification(Dataset):
     def __init__(self, data_dir):
@@ -13,6 +14,7 @@ class DirectoryClassification(Dataset):
 
     # For iterating over the dataset
     def __getitem__(self, idx):
+        idx = self.indices[idx]
         return {
             "filepath": self.filepaths[idx],
             "class_name": self.labels[idx],
@@ -21,6 +23,7 @@ class DirectoryClassification(Dataset):
 
     # Override this function to load the dataset into memory for fast access
     def _build(self):
+        print("Loading dataset...")
         # iterate over files in directory, taking the directory name as the label
         labels = []
         filepaths = []
@@ -31,3 +34,11 @@ class DirectoryClassification(Dataset):
                     filepaths.append(os.path.join(root, file))
         self.labels = labels
         self.filepaths = filepaths
+
+        print(f"Got {len(self.labels)} labels")
+        print(f"Got {len(self.filepaths)} filepaths")
+        
+        self.indices = list(range(len(self.labels)))
+        # randomize indices
+        random.shuffle(self.indices)
+
