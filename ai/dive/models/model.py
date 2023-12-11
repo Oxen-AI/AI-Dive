@@ -16,9 +16,10 @@ class Model:
         start_time = time.time()
         output = self._predict(data)
         end_time = time.time()
-        # join data with output
-        for key in data:
-            output[key] = data[key]
+        if type(data) == dict:
+            # join data with output
+            for key in data:
+                output[key] = data[key]
         output['time'] = end_time - start_time
         return output
 

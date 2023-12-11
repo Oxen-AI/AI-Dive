@@ -97,7 +97,7 @@ def main():
     print("Preparing eval dataset...")
     eval_dataset = DirectoryClassification(data_dir=args.eval_dataset)
     eval_dataset.build()
-    eval_dataset = load_dataset(eval_dataset, label_reader, processor, num_samples=args.num_samples)
+    eval_dataset = load_dataset(eval_dataset, label_reader, processor, num_samples=100)
 
     model = ViTForImageClassification.from_pretrained(
         model_name_or_path,
@@ -114,8 +114,8 @@ def main():
         # fp16=True,
         fp16=False,
         no_cuda=True,
-        save_steps=100,
-        # eval_steps=100,
+        save_steps=1000,
+        eval_steps=1000,
         logging_steps=10,
         learning_rate=2e-4,
         save_total_limit=2,
@@ -149,6 +149,11 @@ def main():
     # write elapsed time to the model dir
     with open(f"{args.output}/elapsed_time.txt", "w") as f:
         f.write(str(elapsed_time))
+        
+    # NOTES:
+    # GPU: 2.8 it/sec vs M1 CPU 4.5 sec/it
+    # GPU Memory: 4GB (TODO: Do math on model size)
+    # Total training time: ??
 
 
 

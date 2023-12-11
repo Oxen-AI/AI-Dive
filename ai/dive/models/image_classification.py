@@ -9,10 +9,23 @@ class ImageClassification(Model):
 
     # Function to run the model on a single example
     def _predict(self, data):
+        print("Running prediction...")
+        print(type(data))
+        if type(data) == dict:
+            if 'filepath' in data:
+                return self._predict_file(data)
+        elif type(data) == Image.Image:
+            return self._predict_image(data, {})
+        
+        raise Exception("Invalid data format")
+
+    def _predict_file(self, data):
         # Read the image
         filename = data['filepath']
         image = Image.open(filename)
+        return self._predict_image(image, data)
 
+    def _predict_image(self, image, data):
         # If grayscale, convert to RGB
         if image.mode == 'L':
             image = image.convert('RGB')
