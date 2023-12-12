@@ -49,6 +49,7 @@ def main():
     train_dataset = ds.to_hf_dataset()
 
     print(train_dataset[0])
+    print(train_dataset[0]['pixel_values'].shape)
 
     print("Preparing eval dataset...")
     train_file = os.path.join(args.data, "test.csv")
@@ -78,18 +79,17 @@ def main():
     )
     
     training_args = TrainingArguments(
-        output_dir=args.output,
+        output_dir=args.output, # directory to save the model
         per_device_train_batch_size=16,
         evaluation_strategy="steps",
-        num_train_epochs=4,
-        no_cuda=(not args.gpu),
-        save_steps=10,
-        eval_steps=10,
+        num_train_epochs=4, # loop through the data N times
+        no_cuda=(not args.gpu), # use the GPU or not
+        save_steps=10, # save the model every N steps
+        eval_steps=10, # evaluate the model every N steps
         logging_steps=10,
         learning_rate=2e-4,
-        save_total_limit=2,
+        save_total_limit=2, # only keep the last N models
         remove_unused_columns=False,
-        push_to_hub=False,
         report_to='tensorboard',
         load_best_model_at_end=True,
     )

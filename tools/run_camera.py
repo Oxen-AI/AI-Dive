@@ -4,16 +4,19 @@ from ai.dive.models.clip import CLIP
 from ai.dive.models.vit import ViT
 from ai.dive.data.file_classification import FileClassification
 from ai.dive.data.directory_classification import DirectoryClassification
+
 import argparse
 import cv2 
+import os
 from PIL import Image
+import pandas as pd
 
 def main():
     # parse command line arguments
     parser = argparse.ArgumentParser(description='Run model on webcam')
     # parser.add_argument('-d', '--dataset', required=True, type=str, help='Dataset to run model on')
     # parser.add_argument('-l', '--labels', required=True, type=str, help='The dynamic labels file to use')
-    # parser.add_argument('-o', '--output', required=True, type=str, help='output file to write results to')
+    parser.add_argument('-o', '--output', required=True, type=str, help='output file to write results to')
     # parser.add_argument('-n', '--num-samples', default=-1, type=int, help='Number of samples to run model on')
     parser.add_argument('-m', '--base_model', default="google/vit-base-patch16-224", type=str, help='The base model to use')
     
@@ -21,9 +24,12 @@ def main():
 
     model = ViT(model_name=args.base_model)
 
-    # TODO: save off all the frames to disk with labels and csv file
-    # TODO: make work with a video instead of webcam
-    # TODO: Write up blog post about this
+    # Create output dir if it doesn't exist
+    images_path = "images"
+    if not os.path.exists(args.output):
+        os.makedirs(os.path.join(args.output, images_path))
+
+    output_data = []
 
     # cap = cv2.VideoCapture('sample_vid.mp4') 
     cap = cv2.VideoCapture(0) 
@@ -51,6 +57,14 @@ def main():
 
         prediction = model.predict(image)
         print(prediction)
+        
+        # Save the image to len(output_data).jpg
+        relative_path = os.path.join(images_path, f"{len(output_data)}.jpg")
+        full_path = os.path.join(args.output, relative_path)
+        image.save(full_path)
+        # Append to the output data
+        prediction["file"] = relative_path
+        output_data.append(prediction)
 
         # describe the type of font 
         # to be used. 
@@ -74,10 +88,16 @@ def main():
         if cv2.waitKey(1) & 0xFF == ord('q'): 
             break
     
+    # Save the csv to the output dir
+    df = pd.DataFrame(output_data)
+    df = df[["file", "prediction", "probability", "time"]]
+    df.to_csv(os.path.join(args.output, "predictions.csv"), index=False)
+    
     # release the cap object 
     cap.release() 
     # close all windows 
     cv2.destroyAllWindows() 
+
 
 if __name__ == '__main__':
     main()
