@@ -9,8 +9,6 @@ class ImageClassification(Model):
 
     # Function to run the model on a single example
     def _predict(self, data):
-        print("Running prediction...")
-        print(type(data))
         if type(data) == dict:
             if 'filepath' in data:
                 return self._predict_file(data)

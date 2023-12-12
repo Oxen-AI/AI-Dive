@@ -6,6 +6,8 @@ from ai.dive.data.label_reader import LabelReader
 from ai.dive.data.directory_classification import DirectoryClassification
 
 from transformers import ViTForImageClassification, ViTImageProcessor
+from transformers import AutoImageProcessor, ResNetForImageClassification
+
 from transformers import TrainingArguments
 from transformers import Trainer
 
@@ -60,9 +62,15 @@ def load_dataset(dataset, label_reader, processor, num_samples=-1):
     print("Dataset prepared!")
     return dataset
 
+def collate_fn(batch):
+    return {
+        'pixel_values': torch.stack([x['pixel_values'] for x in batch]),
+        'labels': torch.tensor([x['labels'] for x in batch])
+    }
+
 def main():
     # parse command line arguments
-    parser = argparse.ArgumentParser(description='Run ViT model on dataset')
+    parser = argparse.ArgumentParser(description='Train a ViT on a dataset')
     parser.add_argument('-t', '--train_dataset', required=True, type=str, help='dataset to train model on')
     parser.add_argument('-e', '--eval_dataset', required=True, type=str, help='dataset to eval model on')
     parser.add_argument('-l', '--labels', required=True, type=str, help='The dynamic labels file to use')
@@ -73,21 +81,12 @@ def main():
 
     start_time = time.time()
 
-    model_name_or_path = args.base_model
-    
     label_reader = LabelReader(labels_file=args.labels)
     labels = label_reader.labels()
-    processor = ViTImageProcessor.from_pretrained(model_name_or_path)
 
-    def collate_fn(batch):
-        return {
-            'pixel_values': torch.stack([x['pixel_values'] for x in batch]),
-            'labels': torch.tensor([x['labels'] for x in batch])
-        }
-
-    metric = load_metric("accuracy")
-    def compute_metrics(p):
-        return metric.compute(predictions=np.argmax(p.predictions, axis=1), references=p.label_ids)
+    model_name_or_path = args.base_model
+    # processor = ViTImageProcessor.from_pretrained(model_name_or_path)
+    processor = AutoImageProcessor.from_pretrained(model_name_or_path)
 
     print("Preparing train dataset...")
     train_dataset = DirectoryClassification(data_dir=args.train_dataset)
@@ -99,12 +98,20 @@ def main():
     eval_dataset.build()
     eval_dataset = load_dataset(eval_dataset, label_reader, processor, num_samples=100)
 
-    model = ViTForImageClassification.from_pretrained(
-        model_name_or_path,
-        num_labels=len(labels),
-        id2label={str(i): c for i, c in enumerate(labels)},
-        label2id={c: str(i) for i, c in enumerate(labels)}
-    )
+    metric = load_metric("accuracy")
+    def compute_metrics(p):
+        return metric.compute(predictions=np.argmax(p.predictions, axis=1), references=p.label_ids)
+
+
+    # model = ViTForImageClassification.from_pretrained(
+    #     model_name_or_path,
+    #     num_labels=len(labels),
+    #     id2label={str(i): c for i, c in enumerate(labels)},
+    #     label2id={c: str(i) for i, c in enumerate(labels)}
+    # )
+    
+    print(f"Loading model... {model_name_or_path}")
+    model = ResNetForImageClassification.from_pretrained(model_name_or_path)
     
     training_args = TrainingArguments(
         output_dir=args.output,

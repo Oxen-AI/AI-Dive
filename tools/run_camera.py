@@ -21,6 +21,10 @@ def main():
 
     model = ViT(model_name=args.base_model)
 
+    # TODO: save off all the frames to disk with labels and csv file
+    # TODO: make work with a video instead of webcam
+    # TODO: Write up blog post about this
+
     # cap = cv2.VideoCapture('sample_vid.mp4') 
     cap = cv2.VideoCapture(0) 
   
@@ -46,6 +50,7 @@ def main():
         image = image.convert('L')
 
         prediction = model.predict(image)
+        print(prediction)
 
         # describe the type of font 
         # to be used. 
