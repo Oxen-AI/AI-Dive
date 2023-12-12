@@ -65,7 +65,7 @@ AI-Dive provides a wrapper around existing models to make them easy to run on yo
 from ai.dive.models.vit import ViT
 
 model = ViT()
-data = {"filepath": "images/shiba_inu_1.jpg"}
+data = {"full_path": "images/shiba_inu_1.jpg"}
 output = model.predict(data)
 print(output)
 ```

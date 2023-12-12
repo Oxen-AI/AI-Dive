@@ -15,7 +15,8 @@ def main():
     parser.add_argument('-m', '--base_model', default="google/vit-base-patch16-224", type=str, help='The base model to use')
     args = parser.parse_args()
 
-    model = ViT(model_name=args.base_model)
+    # model = ViT(model_name=args.base_model)
+    model = ResNet50(model_name=args.base_model)
     # dataset = FileClassification(
     #     data_dir=args.dataset,
     #     file="images.csv",
