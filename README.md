@@ -10,7 +10,7 @@ This library is meant to be practical examples of how to run real world AI Model
 pip install ai-dive
 ```
 
-## Why build AI-Dive
+# Why build AI-Dive
 
 In the age of the [AI Engineer](https://www.latent.space/p/ai-engineer), it is more likely that you will start by grabbing an off the shelf model as a starting point than training your own from scratch. That is not to say you will never train a model. It is just to say, let's verify state of the art before we go building.
 
@@ -18,46 +18,16 @@ In the age of the [AI Engineer](https://www.latent.space/p/ai-engineer), it is m
 
 🤿 AI-Dive let's you easily dive into the results of a model to decide whether it is worth building upon. It also gives a simple and consistent interface to run in your app or implement new models.
 
-# Model
+# Main Components
 
-TODO: Breakup below into each part
+There are a few main components that make up a DIVE.
 
-1) Model
-2) Dataset
-3) Diver
-4) Saver
+1) `Model` - The machine learning model you want to analyze (for example an Image Classifier)
+2) `Dataset` - The dataset you want to evaluate (for example Cats vs Dogs)
+3) `Diver` - The code to run the model given the data
+4) `Saver` - Saves the outputs in a consistent format to analyze
 
-# Dataset
-
-TODO
-
-# Dive
-
-TODO
-
-# Save
-
-TODO
-
-# All Together Now
-
-TODO
-
-# Model & Dataset
-
-There are only a two interfaces to implement to get up and running on any model or dataset.
-
-1) `Dataset` - How to iterate over data
-2) `Model` - How to predict given each data point
-
-# Dive & Save
-
-There are two helper classes to run your model given a dataset
-
-1) `Diver` - How to run each datapoint from your dataset through the model.
-2) `Saver` - How to save off the results of the run. Running the model and not saving the results can cost time and money.
-
-## Models
+## Model
 
 AI-Dive provides a wrapper around existing models to make them easy to run on your own data. We are not writing models from scratch, we are simply wrapping them with a consistent interface so they can be evaluated in a consistent way.
 
@@ -72,19 +42,48 @@ print(output)
 
 There are a few models implemented already, we are looking to extend this list to new models as the come out, or allow this interface to be implemented in your package to save you time evaluating.
 
-HELP US BUILD OUT OUR MODEL LIBRARY OR IMPLEMENT YOUR OWN
-TODO: Show how to do either
+## Dataset
 
-* [x] Vision Transformer (ViT)
-* [ ] Llama-2
-* [ ] Mistral-7b
-* [ ] Dalle-3
-* [ ] Stable Diffusion
-* [ ] Magic Animate
+Models are worthless without the data to run and evaluate them on. Sure, you can poke your model with a stick by running on a single example, but the real insights come from running your model given a dataset.
 
-## Datasets
+There are a few datasets implemented already, including a `DirectoryClassification` dataset and an `ImageFileClassificationDataset` dataset.
 
-Models are worthless without the data to run and evaluate them on. Sure you can poke your model with a stick by running on a single example, but the real insights come from running your model given a dataset.
+The datasets follow some conventions laid out in the [🧼 SUDS blogpost](https://blog.oxen.ai/suds-a-guide-to-structuring-unstructured-data/). They should be re-usable interfaces so we can evaluate multiple models on the same dataset, and use multiple dataset for the same model.
+
+```python
+from ai.dive.models.vit import ViT
+from ai.dive.data.directory_classification import DirectoryClassification
+
+# Instantiate the model and dataset
+model = ViT()
+dataset = DirectoryClassification(data_dir="/path/to/images")
+```
+
+## Diver
+
+The Diver's job is to run the model, given the dataset. It will return a list of json blobs as a results set that you can save to a csv file or any other format to analyze later.
+
+```python
+from ai.dive.models.vit import ViT
+from ai.dive.data.directory_classification import DirectoryClassification
+
+# Instantiate the model and dataset
+model = ViT()
+dataset = DirectoryClassification(data_dir="/path/to/images")
+
+# Run the model on the dataset
+diver = Diver(model, dataset)
+results = diver.run()
+
+# The output will be a list of all the predictions
+print(results)
+```
+
+## Saver
+
+Since these models tend to take some time to run on a dataset, there is a `Saver` class that helps save data as we go. You can specify how often you want to save the data.
+
+By default the Saver will save csvs in a 🧼 SUDS compatible format to make it easy to debug later.
 
 ```python
 from ai.dive.models.vit import ViT
@@ -109,13 +108,50 @@ results = diver.run()
 print(results)
 ```
 
-The `Diver` object saves you the work of processing each row in the dataframe and the `Saver` takes care of writing all the results to disk so you can compare them across runs.
+All together, the `Diver` object saves you the work of processing each row in the dataframe and the `Saver` takes care of writing all the results to disk so you can compare them across runs.
 
 With plug and play models and datasets, the hope is anyone can evaluate a model against any dataset and share the results quickly and effectively.
 
 ## Model Interface
 
-TODO
+Models should be as easy to run as:
+
+```python
+prediction = model.predict(data)
+```
+
+There are a few models implemented already, we are looking to extend this list to new models as the come out, or allow this interface to be implemented in your package to save you time evaluating.
+
+The interface is very simple.
+
+```python
+from ai.dive.models.model import Model
+
+class ImageClassification(Model):
+    def __init__(self):
+        super().__init__()
+
+    # Function to run the model on a single example
+    def _predict(self, data):
+        # Do your work, return dictionary of results
+        return {
+            "prediction": "dog",
+            "probability": 0.9
+        }
+```
+
+We would love help building out interfaces to these models! Or suggestions for ones that you find interesting.
+
+Each week during our [Practical ML Dives](https://lu.ma/practicalml) series we will be knocking out a couple models live for people to re-use.
+
+* [x] ResNet50
+* [x] Vision Transformer (ViT)
+* [x] CLIP (Zero-Shot Image Classification)
+* [ ] Llama-2
+* [ ] Mistral-7b
+* [ ] Dalle-3
+* [ ] Stable Diffusion
+* [ ] Magic Animate
 
 ## Dataset Interface
 
@@ -173,3 +209,11 @@ class DirImageClassification(Dataset):
         self.filepaths = filepaths
 ```
 
+# 🐂 Join the Oxen.ai Community
+
+[Oxen.ai](https://oxen.ai) is a community of builders, who have respect for real world models trained and evaluated on real world data.
+
+Feel free to join the [Discord](https://discord.com/invite/s3tBEn7Ptg) or join any of our [Practical ML Dives](https://lu.ma/practicalml)
+
+Best & Moo
+~ The Oxen.ai Herd
