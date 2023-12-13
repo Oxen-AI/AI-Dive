@@ -10,7 +10,7 @@ This library is meant to be practical examples of how to run real world AI Model
 pip install ai-dive
 ```
 
-# Why build AI-Dive
+# Why build AI Dive?
 
 In the age of the [AI Engineer](https://www.latent.space/p/ai-engineer), it is more likely that you will start by grabbing an off the shelf model as a starting point than training your own from scratch. That is not to say you will never train a model. It is just to say, let's verify state of the art before we go building.
 
