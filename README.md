@@ -1,6 +1,6 @@
 # 🤿 AI Dive
 
-AI `D`ata `I`ngestor, `V`erifier and `E`ncoder.
+AI `D`ata `I`ngestor, `V`isualizer and `E`ncoder.
 
 This library is meant to be practical examples of how to run real world AI Models given data.
 
