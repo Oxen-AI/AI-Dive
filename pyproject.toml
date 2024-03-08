@@ -1,0 +1,28 @@
+
+[project]
+name = "ai-dive"
+version = "0.0.1"
+authors = [
+  {name = "Greg Schoeninger", email = "g@oxen.ai" } # Optional
+]
+readme = "README.md"
+description = "Framework to help you dive into AI"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+    "pandas==2.0.1", 
+    "opencv-python==4.7.0.72",
+    "numpy==1.24.3",
+    "tqdm==4.65.0",
+    "toml==0.10.2",
+    "transformers==4.30.1",
+    "datasets==2.14.5"
+]
+
+[project.urls]  # Optional
+"Homepage" = "https://oxen.ai/"
+"Source" = "https://github.com/Oxen-AI/AI-Dive"
+
+
