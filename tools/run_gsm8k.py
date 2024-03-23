@@ -16,15 +16,17 @@ def main():
     args = parser.parse_args()
 
     #model_name = "meta-llama/Llama-2-70b-hf"
-    # model_name = "mistralai/Mistral-7B-Instruct-v0.2"
+    #model_name = "mistralai/Mistral-7B-Instruct-v0.2"
     model_name = "NousResearch/Nous-Hermes-2-Mistral-7B-DPO"
     model = TogetherAI(model_name)
     dataset = GSM8KDataset(args.dataset)
     
-    output_keys = ['id', 'prompt', 'answer', 'response', 'time']
+    #todo: add system message to keys
+    output_keys = ['model', 'id', 'system_msg', 'prompt', 'answer', 'response', 'time']
     saver = Saver(args.output, output_keys=output_keys, format="jsonl", save_every=args.save_every)
     diver = Diver(model, dataset, saver=saver)
     diver.run()
+    
 
 
 if __name__ == '__main__':

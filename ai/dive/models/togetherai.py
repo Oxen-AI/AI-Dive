@@ -1,12 +1,9 @@
+import sys
+sys.path.append('C:/Users/nyc8p/OneDrive/Documents/GitHub/AI-Dive/')
 from ai.dive.models.model import Model
 from openai import OpenAI
 import os
 
-#PLAN
-#TODO: finish the predict() function
-#TODO: finish run_togetherai.py
-
-#TODO: pass in model name to constructor
 class TogetherAI(Model):
     def __init__(self, model_name):
         super().__init__()
@@ -25,12 +22,13 @@ class TogetherAI(Model):
         #create openai client
         client = OpenAI(api_key=self.api_key,
                         base_url='https://api.together.xyz/v1',)
-        #get prompt from data
-        prompt = data['prompt']
+        #get prompt for model from data
+        modelprompt = data['modelprompt']
+        print(modelprompt)
         messages = [
             {
                 "role": "user",
-                "content": f"{prompt}"
+                "content": f"{modelprompt}"
             }
         ]
         
@@ -41,13 +39,20 @@ class TogetherAI(Model):
             max_tokens=1024
         )
         response = chat_completion.choices[0].message.content
-        # lines = response.split("\n")
-        # response = lines[1].strip() #get the response from the second line
+        #now make response be the string after 'Answer: '
+        print(response)
+        #if 'Answer: ' in response:
+        if 'Answer: ' in response:
+            response = response.split('Answer: ')[1]
+
+        #save prompt to be string after \n\n, before second \n\n
         print("-----------")
         print(response)
         print("-----------")
 
         return {
-            "prompt": prompt,
+            "model": self.model_name,
+            "system_msg": data['system_msg'],
+            "prompt": data['prompt'],
             "response": response,
         }
