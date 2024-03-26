@@ -1,5 +1,3 @@
-import sys
-sys.path.append('C:/Users/nyc8p/OneDrive/Documents/GitHub/AI-Dive/')
 from ai.dive.models.model import Model
 from openai import OpenAI
 import os
@@ -22,16 +20,13 @@ class TogetherAI(Model):
         #create openai client
         client = OpenAI(api_key=self.api_key,
                         base_url='https://api.together.xyz/v1',)
-        #get prompt for model from data
-        modelprompt = data['modelprompt']
-        print(modelprompt)
         messages = [
             {
                 "role": "user",
-                "content": f"{modelprompt}"
+                "content": f"{data['prompt']}"
             }
         ]
-        
+
         # Make API call to Together API
         chat_completion = client.chat.completions.create(
             messages = messages,
@@ -39,20 +34,13 @@ class TogetherAI(Model):
             max_tokens=1024
         )
         response = chat_completion.choices[0].message.content
-        #now make response be the string after 'Answer: '
-        print(response)
-        #if 'Answer: ' in response:
-        if 'Answer: ' in response:
-            response = response.split('Answer: ')[1]
-
-        #save prompt to be string after \n\n, before second \n\n
         print("-----------")
+        print(data['prompt'])
         print(response)
         print("-----------")
 
         return {
             "model": self.model_name,
-            "system_msg": data['system_msg'],
             "prompt": data['prompt'],
             "response": response,
         }
