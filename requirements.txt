@@ -23,6 +23,7 @@ multiprocess==0.70.15
 networkx==3.2.1
 numpy==1.24.3
 opencv-python==4.7.0.72
+openai==1.13.3
 packaging==23.2
 pandas==2.0.1
 Pillow==10.1.0

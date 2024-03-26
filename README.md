@@ -209,6 +209,14 @@ class DirImageClassification(Dataset):
         self.filepaths = filepaths
 ```
 
+## Build and Release
+
+```bash
+pip install --upgrade build
+python -m build
+pip install --upgrade twine
+```
+
 # 🐂 Join the Oxen.ai Community
 
 [Oxen.ai](https://oxen.ai) is a community of builders, who have respect for real world models trained and evaluated on real world data.
