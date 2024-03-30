@@ -1,10 +1,11 @@
-import sys
-sys.path.append('C:/Users/nyc8p/OneDrive/Documents/GitHub/AI-Dive/')
+
 from ai.dive.saver import Saver
 from ai.dive.diver import Diver
-from ai.dive.data.gsm8k_dataset import GSM8KDataset
+from ai.dive.data.prompt_template_filler import PromptTemplateFiller
+from ai.dive.data.mmlu_dataset import MMLUDataset
 from ai.dive.models.togetherai import TogetherAI
-from ai.dive.models.transformer_llm import TransformerLLM
+from ai.dive.models.anthropic import Anthropic
+from ai.dive.models.unify import UnifyAI
 import argparse
 
 def main():
@@ -16,19 +17,30 @@ def main():
     parser.add_argument('-s', '--save_every', default=10, type=int, help='How often to save results to file')
     args = parser.parse_args()
 
-    #model_name = "meta-llama/Llama-2-70b-hf"
-    #model_name = "mistralai/Mistral-7B-Instruct-v0.2"
     # model_name = "NousResearch/Nous-Hermes-2-Mistral-7B-DPO"
     # model = TogetherAI(model_name)
-    model_name = "1bitLLM/bitnet_b1_58-xl"
-    model = TransformerLLM(model_name)
-    dataset = GSM8KDataset(args.dataset)
-    
-    #todo: add system message to keys
-    output_keys = ['id', 'model', 'system_msg', 'prompt', 'answer', 'response', 'time']
+    # model = Anthropic("claude-3-opus-20240229")
+    # model = Anthropic("claude-3-sonnet-20240229")
+    # model = Anthropic("claude-instant-1.2")
+    model = UnifyAI("mistral-medium@mistral-ai")
+    # model = UnifyAI("gemma-2b-it@together-ai")
+    dataset = MMLUDataset(args.dataset)
+
+    output_keys = [
+        'prompt',
+        'choices',
+        'answer',
+        'response',
+        'model',
+        'time',
+        'completion_tokens',
+        'prompt_tokens',
+        'total_tokens'
+    ]
     saver = Saver(args.output, output_keys=output_keys, format="jsonl", save_every=args.save_every)
     diver = Diver(model, dataset, saver=saver)
     diver.run()
+
 
 if __name__ == '__main__':
     main()
