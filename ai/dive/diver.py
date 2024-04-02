@@ -2,10 +2,11 @@
 from tqdm import tqdm
 
 class Diver:
-    def __init__(self, model, dataset, saver=None):
+    def __init__(self, model, dataset, num_items=-1, saver=None):
         self.model = model
         self.dataset = dataset
         self.saver = saver
+        self.num_items = num_items
 
     def run(self):
         # Setup the dataset
@@ -13,6 +14,8 @@ class Diver:
 
         results = []
         num_items = len(self.dataset)
+        if self.num_items > 0:
+            num_items = self.num_items
         for i in tqdm(range(num_items)):
             try:
                 row = self.dataset[i]

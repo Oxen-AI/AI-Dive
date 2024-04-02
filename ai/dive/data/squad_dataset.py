@@ -1,37 +1,36 @@
 from ai.dive.data.dataset import Dataset
-import pandas as pd
+from ai.dive.prompts.qa_prompt import QAPrompt
+import json
 
-class MMLUDataset(Dataset):
-    def __init__(self, file, system_msg=""):
+class SquadDataset(Dataset):
+    def __init__(self, file, n_shot_file=None):
         super().__init__()
 
         self.file = file
-        if system_msg == "":
-            self.system_msg = "You are an AI assistant, you will be given a multiple choice question and 4 answer choices A) B) C) D). Output the correct answer choice only specifying the letter corresponding to the answer A,B,C,D."
-        else:
-            self.system_msg = system_msg
+        self.n_shot_file = n_shot_file
+        self.examples = []
 
     # For iterating over the dataset
     def __len__(self):
-        return len(self.prompts)
+        return len(self.examples)
 
     # For iterating over the dataset
     def __getitem__(self, idx):
-        prompt = self.prompts[idx]
-        choices = self.choices[idx]
-        answer = self.answer[idx]
-
-        prompt = f"{self.system_msg}\n\n{prompt}\n\nChoices:\n\nA) {choices['A']}\nB) {choices['B']}\nC) {choices['D']}\nD) {choices['D']}\n\nAnswer:\n\n"
-
-        return {
-            "prompt": prompt,
-            "choices": choices,
-            "answer": answer
-        }
+        example = self.examples[idx]
+        question = example['prompt']
+        prompt = QAPrompt(example, n_shot_examples=self.n_shot_examples, should_add_answer=False).render()
+        example['question'] = question
+        example['prompt'] = prompt
+        return example
 
     # Override this function to load the dataset into memory for fast access
     def _build(self):
-        df = pd.read_json(self.file, lines = True)
-        self.prompts = df['prompt'].tolist()
-        self.choices = df['choices'].tolist()
-        self.answer = df['answer'].tolist()
+        with open(self.file) as f:
+            for line in f:
+                self.examples.append(json.loads(line))
+
+        self.n_shot_examples = []
+        if self.n_shot_file is not None:
+            with open(self.n_shot_file) as f:
+                for line in f:
+                    self.n_shot_examples.append(json.loads(line))

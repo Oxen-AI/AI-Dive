@@ -1,5 +1,4 @@
-import sys
-sys.path.append('C:/Users/nyc8p/OneDrive/Documents/GitHub/AI-Dive/')
+
 from ai.dive.saver import Saver
 from ai.dive.diver import Diver
 from ai.dive.data.prompt_template_filler import PromptTemplateFiller
