@@ -4,6 +4,23 @@ from transformers import LlamaTokenizer, LlamaForCausalLM
 from transformers import TextStreamer
 
 from ai.dive.models.bitnet.bitnet import BitnetForCausalLM
+from transformers import StoppingCriteria, StoppingCriteriaList
+import torch
+
+class StoppingCriteriaSub(StoppingCriteria):
+    def __init__(self, stops, tokenizer):
+        super().__init__()
+        self.stops = stops
+        self.tokenizer = tokenizer
+
+    def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor):
+        last_token = input_ids[0][-1]
+        # print(f"Stops {self.stops}")
+        # print(f"Last token: {last_token} -> {self.tokenizer.decode(last_token)}")
+        for stop in self.stops:
+            if self.tokenizer.decode(stop) == self.tokenizer.decode(last_token):
+                return True
+        return False
 
 class BitNetLLM(Model):
     def __init__(self, model_name):
@@ -20,8 +37,9 @@ class BitNetLLM(Model):
         prompt = data["prompt"]
 
         # Stop token
-        stop_token = "<STOP>"
-        eos_token_id = self.tokenizer.encode(stop_token, add_special_tokens=False)[0]
+        stop_words = ["<", "\n\n"]
+        stop_words_ids = [self.tokenizer(stop_word, return_tensors='pt', add_special_tokens=False)['input_ids'].squeeze() for stop_word in stop_words]
+        stopping_criteria = StoppingCriteriaList([StoppingCriteriaSub(tokenizer=self.tokenizer, stops=stop_words_ids)])
 
         # Tokenize the data
         model_inputs = self.tokenizer(prompt, return_tensors="pt").to("cuda")
@@ -32,18 +50,19 @@ class BitNetLLM(Model):
         generated_ids = self.model.generate(
             **model_inputs,
             streamer=streamer,
-            max_new_tokens=50
+            max_new_tokens=50,
+            stopping_criteria=stopping_criteria
         )
 
         decoded = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
-        answer = decoded[0]
+        answer = decoded[0][:-1]
+        answer = answer.replace(prompt, "").strip()
         
-        if stop_token in answer:
-            answer = answer.split(stop_token)[-2].strip()
-            answer = answer.split("\n")[-1].strip()
+        is_correct = answer.lower() in [d.lower() for d in data["answers"]]
 
         return {
             "prompt": prompt,
-            "extracted_answer": answer,
+            "guess": answer,
+            "is_correct": is_correct,
             "model": self.model_name
         }

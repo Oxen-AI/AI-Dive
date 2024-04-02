@@ -26,8 +26,9 @@ def main():
         'prompt',
         'question',
         'context',
-        'extracted_answer',
+        'guess',
         'answers',
+        'is_correct',
         'model',
         'time'
     ]

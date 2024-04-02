@@ -7,7 +7,9 @@ class QAPrompt:
 
     def render(self):
         example = self.example
-        system_msg = f"""The following is the context and question from a SQuAD dataset. Answer the question given the context. The answer should be a span of text from the context. If the answer is not in the context, write "Not in context."""
+        system_msg = f"""
+The following is the context and question from a SQuAD dataset. Answer the question given the context. The answer should be a span of text from the context. If the answer is not in the context, write "Not in context."
+"""
         
         if len(self.n_shot_examples) > 0:
             system_msg = ""
