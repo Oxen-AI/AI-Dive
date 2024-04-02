@@ -3,6 +3,7 @@ from ai.dive.saver import Saver
 from ai.dive.diver import Diver
 from ai.dive.data.squad_dataset import SquadDataset
 from ai.dive.models.bitnet_llm import BitNetLLM
+from ai.dive.models.bitnet_olmo import BitNetOlmo
 import argparse
 
 def main():
@@ -17,6 +18,7 @@ def main():
     args = parser.parse_args()
 
     model = BitNetLLM(args.model)
+    # model = BitNetOlmo(args.model)
     if args.n_shot:
         dataset = SquadDataset(args.dataset, n_shot_file=args.n_shot)
     else:
@@ -26,8 +28,8 @@ def main():
         'prompt',
         'question',
         'context',
-        'guess',
         'answers',
+        'guess',
         'is_correct',
         'model',
         'time'

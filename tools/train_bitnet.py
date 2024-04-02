@@ -1,7 +1,8 @@
 
 from ai.dive.saver import Saver
 from ai.dive.trainers.bitnet_trainer import BitNetTrainer
-from ai.dive.data.sft.qa_sft_dataset import QASFTDataset, SFTDataModule
+# TODO: Combine PR and QA into one module
+from ai.dive.data.sft.pr_sft_dataset import SFTDataModule
 from ai.dive.models.bitnet_llm import BitNetLLM
 import argparse
 
@@ -16,12 +17,15 @@ def main():
     args = parser.parse_args()
 
     model = BitNetLLM(args.model)
+    
+    # TODO: This can just take a prompt object
     dataset = SFTDataModule(
         tokenizer=model.tokenizer,
         data_path=args.dataset,
         num_samples=args.num_samples,
         max_seq_len=args.max_seq_len
     )
+    print(model.tokenizer.decode(dataset.dataset[0]['input_ids']))
     trainer = BitNetTrainer(args.output)
     trainer.train(model, dataset)
 

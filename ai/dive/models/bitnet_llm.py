@@ -59,6 +59,9 @@ class BitNetLLM(Model):
         answer = answer.replace(prompt, "").strip()
         
         is_correct = answer.lower() in [d.lower() for d in data["answers"]]
+        if data['answers'] == []:
+            if "not in context" in answer.lower():
+                is_correct = True
 
         return {
             "prompt": prompt,
