@@ -45,6 +45,11 @@ class TogetherAI(Model):
         if 'Answer: ' in response:
             response = response.split('Answer: ')[1]
 
+        # if response is a string of a number convert to int
+        try:
+            response = int(response)
+        except:
+            pass
         #save prompt to be string after \n\n, before second \n\n
         print("-----------")
         print(response)
