@@ -21,14 +21,13 @@ Context:
 
 Question:
 {data['prompt']}
-
-Answer:
 """
             answer = data['answers'][0] if len(data['answers']) > 0 else "Not in context."
             
             qa_instructions.append({
                 'prompt': prompt.strip(),
                 'response': answer,
+                'source': 'squad'
             })
     
     with open(args.output, 'w') as f:

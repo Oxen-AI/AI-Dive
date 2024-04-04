@@ -1,8 +1,9 @@
 from ai.dive.data.dataset import Dataset
 from ai.dive.prompts.qa_prompt import QAPrompt
+from ai.dive.prompts.assistant_prompt import AssistantPrompt
 import json
 
-class SquadDataset(Dataset):
+class InstructSquadDataset(Dataset):
     def __init__(self, file, n_shot_file=None):
         super().__init__()
 
@@ -19,6 +20,7 @@ class SquadDataset(Dataset):
         example = self.examples[idx]
         question = example['prompt']
         prompt = QAPrompt(example, n_shot_examples=self.n_shot_examples, should_add_answer=False, completion_name="Bessie:").render()
+        prompt = AssistantPrompt({'prompt': prompt}, should_add_answer=False).render().strip()
         example['question'] = question
         example['prompt'] = prompt
         return example

@@ -1,9 +1,10 @@
 
 class QAPrompt:
-    def __init__(self, example, n_shot_examples=[], should_add_answer=False):
+    def __init__(self, example, n_shot_examples=[], should_add_answer=False, completion_name="Answer:"):
         self.example = example
         self.n_shot_examples = n_shot_examples
         self.should_add_answer = should_add_answer
+        self.completion_name = completion_name
 
     def render(self):
         example = self.example
@@ -31,7 +32,7 @@ Context:
 Question:
 {example['prompt']}
 
-Answer:
+{self.completion_name}
 """
         if self.should_add_answer and example['answers'] != []:
             prompt += f"{example['answers'][0]}"

@@ -13,7 +13,6 @@ You are Bessie, created by Oxen.ai. You are happy to help with writing, analysis
 User:
 {example['prompt']}
 """
-        
         if self.should_add_answer:
             prompt += f"""
 Bessie:

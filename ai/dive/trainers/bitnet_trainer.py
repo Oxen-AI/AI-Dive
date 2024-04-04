@@ -24,7 +24,8 @@ class BitNetTrainer(Trainer):
             warmup_steps=30,
             logging_steps=1,
             num_train_epochs=2,
-            save_steps=500
+            save_steps=500,
+            save_total_limit=2,
         )
 
         trainer = SFTTrainer(
